@@ -1,0 +1,7 @@
+Dear ${USER}, 
+
+You are awesome! 
+
+Yours Truly,
+
+Your program
