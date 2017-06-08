@@ -25,7 +25,12 @@ def main(host,port,send_account,pswd,to_account):
   # set up the SMTP server
   s = smtplib.SMTP(host=host, port=port)
   s.starttls()
-  s.login(send_account,pswd)
+  try:
+    s.login(send_account,pswd)
+  except:
+    print("login unsuccessful. Exiting")
+    exit()
+
 
   # get the message template and fill it up
   message_template = read_template('msg.txt')
