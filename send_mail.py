@@ -23,7 +23,11 @@ def read_template(filename):
 # main app
 def main(host,port,send_account,pswd,to_account):
   # set up the SMTP server
-  s = smtplib.SMTP(host=host, port=port)
+  try:
+    s = smtplib.SMTP(host=host, port=port,timeout=1)
+  except:
+    print("connection unsuccessful. Exiting")
+    exit()
   s.starttls()
   try:
     s.login(send_account,pswd)
