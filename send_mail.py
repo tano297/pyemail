@@ -51,9 +51,9 @@ def main(host,port,send_account,pswd,to_account):
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser("Example of sending an email using python.")
-    arg_parser.add_argument('--host', type=str, default='smtp-mail.outlook.com', help='smtp server name. Defaults to \'%(default)s\'')
+    arg_parser.add_argument('--host', type=str, default='smtp.gmail.com', help='smtp server name. Defaults to \'%(default)s\'')
     arg_parser.add_argument('--port', type=int, default=587, help='smtp server port number. Defaults to \'%(default)s\'')
-    arg_parser.add_argument('--send_account', type=str, default="tano.297@hotmail.com", help='account to send email from. Defaults to \'%(default)s\'')
+    arg_parser.add_argument('--send_account', type=str, default="tano.297@gmail.com", help='account to send email from. Defaults to \'%(default)s\'')
     arg_parser.add_argument('--pswd', type=str, default="", help='password for the account to send email from. Defaults to \'%(default)s\'')
     arg_parser.add_argument('--to_account', type=str, default="tano.297@gmail.com", help='account to send email to. Defaults to \'%(default)s\'')    
     args = arg_parser.parse_args()
