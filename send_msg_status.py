@@ -5,6 +5,7 @@ import argparse
 import os
 import yaml
 import datetime
+import time
 
 #template to parse email message
 from string import Template
@@ -23,7 +24,7 @@ def read_template(filename):
     return Template(template_file_content)
 
 # send a message
-def send_message(host,port,send_account,pswd,to_account, status):
+def send_message(host,port,send_account,pswd,to_account, hostname, status):
     # set up the SMTP server
   try:
     s = smtplib.SMTP(host=host, port=port,timeout=1)
@@ -55,7 +56,7 @@ def send_message(host,port,send_account,pswd,to_account, status):
   date = str(datetime.datetime.now().date())
   time = str(datetime.datetime.now().time())
 
-  message = message_template.substitute(USER=user, STATUS=status, DATE=date, TIME=time)
+  message = message_template.substitute(USER=user, HOSTNAME= hostname, STATUS=status, DATE=date, TIME=time)
   # add in the message body
   msg.attach(MIMEText(message, 'plain'))
   # send the message via the server set up earlier.
@@ -63,15 +64,32 @@ def send_message(host,port,send_account,pswd,to_account, status):
   del msg
 
 # main app
-def main(host,port,send_account,pswd,to_account):
+def main(host,port,send_account,pswd,to_account,hostname,period):
   # init with status successful
   status = "ALIVE"
-  send_message(host,port,send_account,pswd,to_account,status)
+  send_message(host,port,send_account,pswd,to_account,hostname,status)
 
+  # and then check the response
+  while True:
+    response = os.system("ping -c 1 " + hostname + " > /dev/null 2>&1")
+    # check ping response
+    if response == 0:
+      new_status = "ALIVE"
+    else:
+      new_status = "DEAD"
+    # if status changed, report
+    if new_status != status:
+      print("Server status changed to %s, trying to notify"%new_status)
+      status = new_status
+      send_message(host,port,send_account,pswd,to_account,hostname,status)
+    # go to bed baby
+    time.sleep(period)
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser("Example of sending an email using python.")
     arg_parser.add_argument('--cfg','-c', type=str, default='cfg.yaml', help='email info config file. Defaults to \'%(default)s\'')
+    arg_parser.add_argument('--server','-s', type=str, default='google.com', help='Server to check for life. Defaults to \'%(default)s\'')
+    arg_parser.add_argument('--period','-p', type=int, default=60, help='Period in seconds to check for life. Defaults to \'%(default)s\'')
     args = arg_parser.parse_args()
 
     # try to open the config file
@@ -93,4 +111,6 @@ if __name__ == '__main__':
          cfg["port"],
          cfg["send_account"],
          cfg["pswd"],
-         cfg["to_account"])
+         cfg["to_account"],
+         args.server,
+         args.period)

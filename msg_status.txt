@@ -1,6 +1,6 @@
 Dear ${USER}, 
 
-Server is ${STATUS} !
+Server ${HOSTNAME} is ${STATUS} !
 
 Status from ${DATE} at ${TIME}.
 
