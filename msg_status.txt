@@ -1,0 +1,11 @@
+Dear ${USER}, 
+
+Server is ${STATUS} !
+
+Status from ${DATE} at ${TIME}.
+
+Yours Truly,
+
+The bot that will kill you. 
+
+*Ahem*, I mean your friendly bot.
