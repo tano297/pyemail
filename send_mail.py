@@ -3,6 +3,7 @@
 #to parse arguments
 import argparse
 import os
+import yaml
 
 #template to parse email message
 from string import Template
@@ -37,7 +38,7 @@ def main(host,port,send_account,pswd,to_account):
 
 
   # get the message template and fill it up
-  message_template = read_template('msg.txt')
+  message_template = read_template('msg_simple.txt')
 
   # create a message
   msg = MIMEMultipart()
@@ -60,20 +61,26 @@ def main(host,port,send_account,pswd,to_account):
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser("Example of sending an email using python.")
-    arg_parser.add_argument('--host', type=str, default='smtp.gmail.com', help='smtp server name. Defaults to \'%(default)s\'')
-    arg_parser.add_argument('--port', type=int, default=587, help='smtp server port number. Defaults to \'%(default)s\'')
-    arg_parser.add_argument('--send_account', type=str, default="tano.297@gmail.com", help='account to send email from. Defaults to \'%(default)s\'')
-    arg_parser.add_argument('--pswd', type=str, default="", help='password for the account to send email from. Defaults to \'%(default)s\'')
-    arg_parser.add_argument('--to_account', type=str, default="tano.297@gmail.com", help='account to send email to. Defaults to \'%(default)s\'')    
+    arg_parser.add_argument('--cfg','-c', type=str, default='cfg.yaml', help='email info config file. Defaults to \'%(default)s\'')
     args = arg_parser.parse_args()
 
+    # try to open the config file
+    try:
+      print("Trying to open config %s file"%args.cfg)
+      f = open(args.cfg,'r')
+      cfg = yaml.load(f)
+      print("Using host: {}".format(cfg["host"]))
+      print("Using port: {}".format(cfg["port"]))
+      print("Using send_account: {}".format(cfg["send_account"]))
+      print("Using pswd: {}".format(cfg["pswd"]))
+      print("Using to_account: {}".format(cfg["to_account"]))
+    except:
+      print("Problem parsing files")
+      quit()
 
-    main(args.host,
-         args.port,
-         args.send_account,
-         args.pswd,
-         args.to_account)
-
-
-
-
+    print("Successfully opened yaml file and got all content. Sending mail")
+    main(cfg["host"],
+         cfg["port"],
+         cfg["send_account"],
+         cfg["pswd"],
+         cfg["to_account"])
